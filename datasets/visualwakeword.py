@@ -50,10 +50,9 @@ def vww_get_datasets(data, load_train=True, load_test=True, input_size=224, coco
 
     if load_train:
         train_transform = transforms.Compose([
-            transforms.RandomResizedCrop(input_size),
-            transforms.RandomHorizontalFlip(),
+            transforms.Resize(input_size),
+            transforms.CenterCrop(input_size),
             transforms.ToTensor(),
-            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
             ai8x.normalize(args=args),
         ])
 
@@ -68,10 +67,9 @@ def vww_get_datasets(data, load_train=True, load_test=True, input_size=224, coco
 
     if load_test:
         test_transform = transforms.Compose([
-            transforms.Resize(int(input_size / 0.875)),
+            transforms.Resize(input_size),
             transforms.CenterCrop(input_size),
             transforms.ToTensor(),
-            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
             ai8x.normalize(args=args),
         ])
 
