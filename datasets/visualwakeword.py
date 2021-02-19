@@ -1,26 +1,3 @@
-###################################################################################################
-#
-# Copyright (C) 2018-2020 Maxim Integrated Products, Inc. All Rights Reserved.
-#
-# Maxim Integrated Products, Inc. Default Copyright Notice:
-# https://www.maximintegrated.com/en/aboutus/legal/copyrights.html
-#
-###################################################################################################
-#
-# Portions Copyright (c) 2018 Intel Corporation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 """
 Visual Wake Word Dataset (using pyvww)
 """
@@ -47,18 +24,19 @@ def vww_get_datasets(data, load_train=True, load_test=True, input_size=224, coco
     from the padded image or its horizontal flip.
     """
     (data_dir, args) = data
-
+    print(data_dir)
     if load_train:
         train_transform = transforms.Compose([
-            transforms.Resize(input_size),
-            transforms.CenterCrop(input_size),
+            transforms.RandomResizedCrop(input_size),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
+            transforms.Normalize((0.4773, 0.4487, 0.4071),(0.2332, 0.2282, 0.2300)),
             ai8x.normalize(args=args),
         ])
 
         train_dataset = pyvww.pytorch.VisualWakeWordsClassification(
             root=data_dir + '/' + coco_folder,
-            annFile=data_dir + "/vww/annotations/instances_train.json",
+            annFile=data_dir + "/VWW/annotations/instances_train.json",
             transform=train_transform,
         )
 
@@ -67,15 +45,16 @@ def vww_get_datasets(data, load_train=True, load_test=True, input_size=224, coco
 
     if load_test:
         test_transform = transforms.Compose([
-            transforms.Resize(input_size),
+            transforms.Resize(int(input_size / 0.875)),
             transforms.CenterCrop(input_size),
             transforms.ToTensor(),
+            transforms.Normalize((0.4773, 0.4487, 0.4071),(0.2332, 0.2282, 0.2300)),
             ai8x.normalize(args=args),
         ])
 
         test_dataset = pyvww.pytorch.VisualWakeWordsClassification(
             root=data_dir + '/' + coco_folder,
-            annFile=data_dir + "/vww/annotations/instances_val.json",
+            annFile=data_dir + "/VWW/annotations/instances_val.json",
             transform=test_transform,
         )
 
